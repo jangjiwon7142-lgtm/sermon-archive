@@ -34,14 +34,6 @@ header p{margin:4px 0 0;color:var(--sub);font-size:14px}
 .dash>summary::after{content:"접기";font-weight:400;font-size:13px;color:var(--sub)}
 .dash:not([open])>summary::after{content:"펼치기"}
 .dash-body{padding:4px 16px 18px;display:flex;flex-direction:column;gap:22px}
-.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.kpi{background:var(--hov);border-radius:10px;padding:10px 12px;min-width:0;border:0;text-align:left}
-.kpi .k{display:block;font-size:12.5px;color:var(--sub)}
-.kpi .v{display:block;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
-.kpi .v small{font-size:13px;font-weight:400;color:var(--sub);margin-left:2px}
-.kpi .d{display:block;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi .d.alert{color:var(--warn);font-weight:600}
-button.kpi{cursor:pointer}button.kpi:hover{background:var(--accbg)}
 .panel{display:flex;flex-direction:column;gap:10px;min-width:0}
 .ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .ph h2{margin:0;font-size:15px}
@@ -129,7 +121,6 @@ footer{color:var(--sub);font-size:12.5px;text-align:center;padding-bottom:28px}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
 @media(max-width:760px){
- .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis>:last-child{grid-column:1/-1}
  .fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 .fpanel{margin:10px 0 4px}
@@ -152,7 +143,6 @@ footer{color:var(--sub);font-size:12.5px;text-align:center;padding-bottom:28px}
 <details class="dash" id="dash" open>
  <summary>한눈에 보기</summary>
  <div class="dash-body">
-  <div class="kpis" id="kpis"></div>
   <div class="panel">
    <div class="ph"><h2>연도별 · 월별 설교자</h2><span class="hint">이름을 누르면 그 설교가 열려요</span></div>
    <div class="years" id="cal-years" role="group" aria-label="연도 선택"></div>
@@ -374,26 +364,6 @@ function renderDash(){
  const dates=ALL.map(r=>r.date).filter(Boolean).sort(),first=dates[0],last=dates[dates.length-1];
  const years=[...new Set(ALL.map(r=>+r.year).filter(Boolean))].sort();
  const thisY=years[years.length-1];
- const M={};ALL.forEach(r=>{const k=r.date.slice(0,7);M[k]=(M[k]||0)+1});
- // 연도별 주일 대비
- const cover={};years.forEach(y=>{let n=0,s=0;for(let m=1;m<=12;m++){const k=`${y}-${String(m).padStart(2,"0")}`;s+=sundays(y,m,first,last);n+=M[k]||0}cover[y]=[n,s]});
-
- /* KPI */
- const pc={};ALL.forEach(r=>r.preacher&&(pc[r.preacher]=(pc[r.preacher]||0)+1));
- const topP=Object.entries(pc).sort((a,b)=>b[1]-a[1]).slice(0,2);
- const books=new Set(ALL.map(r=>r.book).filter(b=>BOOK_ORDER.includes(b)));
- const ntN=ALL.filter(r=>NT.some(b=>b[0]===r.book)).length;
- const review=ALL.filter(r=>r.needs_review).length;
- const [yn,ys]=cover[thisY];const yr=ys?Math.round(Math.min(yn/ys,1)*100):0;
- const k=[
-  `<div class="kpi"><span class="k">설교</span><span class="v">${ALL.length}<small>편</small></span><span class="d">${first.slice(0,7).replace("-",".")} – ${last.slice(0,7).replace("-",".")}</span></div>`,
-  `<button class="kpi" data-ky="${thisY}"><span class="k">${thisY}년</span><span class="v">${yn}<small>편</small></span><span class="d ${yr<75?"alert":""}">주일 대비 ${yr}%</span></button>`,
-  `<div class="kpi"><span class="k">설교자</span><span class="v">${Object.keys(pc).length}<small>명</small></span><span class="d">${topP.map(([n,c])=>n.replace(/ 목사$/,"")+" "+c).join(" · ")}</span></div>`,
-  `<div class="kpi"><span class="k">성경 본문</span><span class="v">${books.size}<small>/66권</small></span><span class="d">신약 ${Math.round(ntN/ALL.length*100)}% · 구약 ${100-Math.round(ntN/ALL.length*100)}%</span></div>`,
-  `<button class="kpi" data-kr="1"><span class="k">검토 필요</span><span class="v">${review}<small>편</small></span><span class="d ${review?"alert":""}">${review?"눌러서 보기":"없음"}</span></button>`
- ];
- $("#kpis").innerHTML=k.join("");
- $("#kpis").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.ky){S.y=b.dataset.ky;S.m=""}if(b.dataset.kr)S.r="1";apply();jump()});
 
 
  /* 연도별·월별 설교자 */
