@@ -6,92 +6,436 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#f7f6f2">
 <title>설교 아카이브</title>
+<meta name="description" content="주일 설교 요약 아카이브. 설교자·교회·성경 본문·주제·시리즈별로 찾아보세요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="설교 아카이브">
+<meta property="og:description" content="주일 설교 요약 아카이브. 설교자·교회·성경 본문·주제·시리즈별로 찾아보세요.">
+<meta property="og:url" content="https://jangjiwon7142-lgtm.github.io/sermon-archive/">
+<!-- 대표 이미지를 올리면 아래 주석을 풀어 주세요 (권장 1200x630) -->
+<!-- <meta property="og:image" content="https://jangjiwon7142-lgtm.github.io/sermon-archive/og.png"> -->
 <style>
-:root{color-scheme:light;--bg:#f7f6f2;--card:#fff;--ink:#1f2328;--sub:#6b7280;--line:#e5e2d9;--acc:#2f5d50;--accbg:#e4eee9;--hov:#f1efe8}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
-header{padding:28px 16px 8px;max-width:960px;margin:0 auto}h1{margin:0;font-size:24px}header p{margin:4px 0 0;color:var(--sub);font-size:14px}
-.bar{position:sticky;top:0;background:var(--bg);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
-.bar .in{max-width:960px;margin:0 auto;display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr}
-.bar input[type=search]{grid-column:1/-1}
+:root{color-scheme:light;--bg:#f7f6f2;--card:#fff;--ink:#1f2328;--sub:#6b7280;--line:#e5e2d9;--acc:#2f5d50;--accbg:#e4eee9;--hov:#f1efe8;
+ --warn:#9a6212;--warnbg:#fbf0dc;
+ --q1:#dcebe4;--q2:#b4d3c4;--q3:#7fb29b;--q4:#4a8a70;--q5:#2f5d50;
+ --s1:#2f5d50;--s2:#eb6834;--s3:#2a78d6;--s0:#b5b1a6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+button{font:inherit;color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding-left:16px;padding-right:16px}
+header{padding-top:28px;padding-bottom:8px}
+h1{margin:0;font-size:24px}
+header p{margin:4px 0 0;color:var(--sub);font-size:14px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- 한눈에 보기 ---- */
+.dash{margin:14px 0 6px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.dash>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-weight:700;font-size:15px}
+.dash>summary::-webkit-details-marker{display:none}
+.dash>summary::after{content:"접기";font-weight:400;font-size:13px;color:var(--sub)}
+.dash:not([open])>summary::after{content:"펼치기"}
+.dash-body{padding:4px 16px 18px;display:flex;flex-direction:column;gap:22px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.kpi{background:var(--hov);border-radius:10px;padding:10px 12px;min-width:0;border:0;text-align:left}
+.kpi .k{display:block;font-size:12.5px;color:var(--sub)}
+.kpi .v{display:block;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+.kpi .v small{font-size:13px;font-weight:400;color:var(--sub);margin-left:2px}
+.kpi .d{display:block;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .d.alert{color:var(--warn);font-weight:600}
+button.kpi{cursor:pointer}button.kpi:hover{background:var(--accbg)}
+.panel{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ph h2{margin:0;font-size:15px}
+.ph .hint{font-size:12.5px;color:var(--sub)}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12.5px;color:var(--sub);align-items:center}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+
+/* 연도별·월별 설교자 달력 */
+.years{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.years button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 14px;font-size:14px;cursor:pointer;font-variant-numeric:tabular-nums}
+.years button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+.cal-sum{font-size:13.5px;color:var(--sub)}
+.cal-sum b{color:var(--ink)}
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px}
+.mon{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);min-width:0}
+.mon.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.mh{display:flex;justify-content:space-between;align-items:baseline;width:100%;border:0;background:var(--hov);padding:7px 10px;cursor:pointer;text-align:left}
+.mh b{font-size:14px}
+.mh span{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+.mh:disabled{cursor:default}
+.mh:not(:disabled):hover{background:var(--accbg)}
+.mon ul{list-style:none;margin:0;padding:4px 0}
+.ev{display:grid;grid-template-columns:2.6em minmax(0,1fr);gap:0 6px;width:100%;border:0;background:none;padding:5px 10px;text-align:left;cursor:pointer;line-height:1.35}
+.ev:hover{background:var(--hov)}
+.ev .dd{grid-row:1/3;font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums;padding-top:1px}
+.ev .pr{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev .ch{font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev.guest .ch{color:var(--s2);font-weight:600}
+.ev.guest .ch::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--s2);margin-right:5px;vertical-align:1px}
+.emp{padding:10px;font-size:12.5px;color:var(--sub)}
+.emp.gap{color:var(--warn)}
+
+/* ---- 필터 ---- */
+.bar{position:sticky;top:0;background:var(--bg);padding-top:10px;padding-bottom:10px;border-bottom:1px solid var(--line);z-index:5}
+.bar .in{max-width:960px;margin:0 auto;padding-left:16px;padding-right:16px;display:flex;flex-direction:column;gap:8px}
+.srow{display:grid;grid-template-columns:1fr auto;gap:8px}
 input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:15px}
-main{max-width:960px;margin:0 auto;padding:8px 16px 60px}.meta{color:var(--sub);font-size:13px;margin:8px 0}
+select{min-width:0}
+.ftoggle{padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;white-space:nowrap;font-size:15px}
+.ftoggle b{color:var(--acc)}
+.fpanel{display:flex;flex-direction:column;gap:8px}
+.fgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.topics{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.topics button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-size:13.5px;cursor:pointer}
+.topics button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.topics .lbl{flex:none;font-size:13px;color:var(--sub);align-self:center;margin-right:2px}
+.active{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px}
+.active:empty{display:none}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--accbg);color:var(--acc);border:0;border-radius:999px;padding:3px 6px 3px 10px;font-size:13px;cursor:pointer}
+.chip::after{content:"✕";font-size:11px;opacity:.7;padding:0 3px}
+.clear{border:0;background:none;color:var(--sub);text-decoration:underline;cursor:pointer;font-size:13px}
+
+/* ---- 목록 ---- */
+main{padding-top:8px;padding-bottom:60px}
+.meta{color:var(--sub);font-size:13px;margin:8px 0;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .ym{margin:20px 0 6px;font-size:14px;font-weight:700;color:var(--acc);border-bottom:2px solid var(--accbg);padding-bottom:4px}
 .list{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-details{border-top:1px solid var(--line)}details:first-child{border-top:0}
-summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:96px 100px 130px 1fr 18px;gap:10px;align-items:baseline;padding:12px 14px}
-summary::-webkit-details-marker{display:none}summary:hover{background:var(--hov)}
-summary::after{content:"▸";color:var(--sub);justify-self:end;transition:transform .15s}
-details[open]>summary::after{transform:rotate(90deg)}details[open]>summary{background:var(--hov)}
+.list>details{border-top:1px solid var(--line)}.list>details:first-child{border-top:0}
+.list summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:96px 100px 130px 1fr 18px;gap:10px;align-items:baseline;padding:12px 14px}
+.list summary::-webkit-details-marker{display:none}.list summary:hover{background:var(--hov)}
+.list summary::after{content:"▸";color:var(--sub);justify-self:end;transition:transform .15s}
+.list details[open]>summary::after{transform:rotate(90deg)}.list details[open]>summary{background:var(--hov)}
 .d{color:var(--sub);font-size:14px;font-variant-numeric:tabular-nums}.c{font-size:14px}.p{font-size:14px}.t{font-weight:600}
 .c,.p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dim{color:var(--sub)}
-.body{padding:4px 16px 16px 16px;background:var(--hov)}
+.inf{color:var(--sub)}
+.badge{display:inline-block;font-size:11.5px;font-weight:600;border-radius:5px;padding:0 6px;margin-left:6px;vertical-align:2px;line-height:1.6}
+.badge.rv{background:var(--warnbg);color:var(--warn)}
+.badge.sr{background:var(--accbg);color:var(--acc)}
+mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.body{padding:4px 16px 16px;background:var(--hov)}
 .body .sc{color:var(--sub);font-size:13.5px;margin:2px 0 8px}.body p{margin:0 0 8px;font-size:15px}
 .body ul{margin:6px 0 8px;padding-left:20px;font-size:14.5px}.body li{margin:3px 0}
 blockquote{margin:10px 0;padding:4px 12px;border-left:3px solid var(--acc);color:var(--sub);font-size:14.5px}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{background:var(--accbg);color:var(--acc);border-radius:999px;padding:2px 10px;font-size:12.5px}
-.src{display:inline-block;margin-top:4px;padding:7px 14px;border-radius:8px;background:var(--acc);color:var(--bg);text-decoration:none;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tag{background:var(--accbg);color:var(--acc);border-radius:999px;padding:2px 10px;font-size:12.5px;border:0;cursor:pointer}
+.acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.src{display:inline-block;padding:7px 14px;border-radius:8px;background:var(--acc);color:var(--bg);text-decoration:none;font-size:14px}
+.go{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);font-size:13.5px;cursor:pointer}
+.go:hover{border-color:var(--acc);color:var(--acc)}
+.missing{padding:10px 14px;border-top:1px dashed var(--line);color:var(--warn);font-size:13.5px;background:repeating-linear-gradient(135deg,transparent 0 8px,var(--warnbg) 8px 9px)}
 .empty{text-align:center;color:var(--sub);padding:40px 0}
-.more{display:block;margin:16px auto;padding:10px 24px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
-@media(max-width:640px){
- .bar .in{grid-template-columns:1fr 1fr}.bar select:last-child{grid-column:1/-1}
- summary{grid-template-columns:1fr 18px;gap:2px 8px;padding:12px}
- summary .t{grid-column:1;grid-row:2;font-size:16px}summary .d{grid-column:1;grid-row:1}
- summary .c,summary .p{display:none}summary::after{grid-column:2;grid-row:1/3;align-self:center}
- summary .sub2{display:block;grid-column:1;grid-row:3;color:var(--ink);font-size:15px;font-weight:700;margin-top:2px}
- summary .t{font-size:17px;font-weight:700}
+.more{display:block;margin:16px auto;padding:10px 24px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer}
+footer{color:var(--sub);font-size:12.5px;text-align:center;padding-bottom:28px}
+
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+@media(max-width:760px){
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis>:last-child{grid-column:1/-1}
+ .fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media(min-width:641px){summary .sub2{display:none}}
+.fpanel{margin:10px 0 4px}
+@media(max-width:760px){.fpanel:not(.open){display:none}}
+@media(max-width:480px){.cal{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.ev{grid-template-columns:2.2em minmax(0,1fr);padding:5px 7px;gap:0 4px}.ev .pr{font-size:13.5px}.mh{padding:6px 8px}.mh span{font-size:11px}}
+@media(max-width:640px){
+ .list summary{grid-template-columns:1fr 18px;gap:2px 8px;padding:12px}
+ .list summary .t{grid-column:1;grid-row:2;font-size:17px;font-weight:700}.list summary .d{grid-column:1;grid-row:1}
+ .list summary .c,.list summary .p{display:none}.list summary::after{grid-column:2;grid-row:1/3;align-self:center}
+ .list summary .sub2{display:block;grid-column:1;grid-row:3;color:var(--ink);font-size:15px;font-weight:700;margin-top:2px}
+}
+@media(min-width:641px){.list summary .sub2{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header><h1>설교 아카이브</h1><p id="sub">불러오는 중…</p></header>
-<div class="bar"><div class="in">
-<input id="q" type="search" placeholder="제목·목사·교회·성경·요약 검색">
-<select id="fy"><option value="">전체 연도</option></select>
-<select id="fp"><option value="">전체 목사</option></select>
-<select id="ft"><option value="">전체 주제</option></select>
+<header class="wrap"><h1>설교 아카이브</h1><p id="sub">불러오는 중…</p></header>
+
+<div class="wrap">
+<details class="dash" id="dash" open>
+ <summary>한눈에 보기</summary>
+ <div class="dash-body">
+  <div class="kpis" id="kpis"></div>
+  <div class="panel">
+   <div class="ph"><h2>연도별 · 월별 설교자</h2><span class="hint">이름을 누르면 그 설교가 열려요</span></div>
+   <div class="years" id="cal-years" role="group" aria-label="연도 선택"></div>
+   <div class="cal-sum" id="cal-sum"></div>
+   <div class="cal" id="cal"></div>
+   <div class="legend" id="cal-lg"></div>
+  </div>
+ </div>
+</details>
+</div>
+
+<div class="wrap">
+ <div class="fpanel" id="fpanel">
+  <div class="fgrid">
+   <select id="fy" aria-label="연도"><option value="">전체 연도</option></select>
+   <select id="fp" aria-label="설교자"><option value="">전체 설교자</option></select>
+   <select id="fc" aria-label="교회"><option value="">전체 교회</option></select>
+   <select id="fb" aria-label="성경"><option value="">전체 성경</option></select>
+   <select id="fs" aria-label="시리즈"><option value="">전체 시리즈</option></select>
+   <select id="fo" aria-label="정렬"><option value="">최신순</option><option value="old">오래된 순</option></select>
+   <select id="fr" aria-label="검토 상태"><option value="">모든 설교</option><option value="1">검토 필요만</option></select>
+  </div>
+  <div class="topics" id="ft" role="group" aria-label="주제"><span class="lbl">주제</span></div>
+ </div>
+</div>
+
+<div class="bar" id="bar"><div class="in">
+ <div class="srow">
+  <input id="q" type="search" placeholder="제목·목사·교회·성경·요약 검색" aria-label="검색">
+  <button class="ftoggle" id="ftoggle" aria-expanded="false" aria-controls="fpanel">필터</button>
+ </div>
+ <div class="active" id="active"></div>
 </div></div>
-<main><div class="meta" id="meta"></div><div id="list"></div><button class="more" id="more" hidden>더 보기</button></main>
+
+<main class="wrap"><div class="meta"><span id="meta"></span><span id="updated"></span></div><div id="list"></div><button class="more" id="more" hidden>더 보기</button></main>
+<footer class="wrap">요약은 원문을 바탕으로 정리한 것입니다. 정확한 내용은 ‘원문 보기’에서 확인해 주세요.<br>교회명 뒤의 * 표시는 원문에 교회명이 없어 설교자 기준으로 채운 값입니다.</footer>
+
 <script>
+/* =========================================================
+   설정: 데이터 표기를 화면에서 통일합니다 (sermons.json은 그대로 둡니다)
+   ========================================================= */
+// 같은 교회의 다른 표기 → 표준명
+const CHURCH_ALIAS={"동부":"서울동부","서울 동부":"서울동부","잠실":"서울잠실","서울 은평":"서울은평"};
+// 교회명이 비어 있을 때 설교자 기준으로 채울 기본값 (화면에 '추정'으로 표시)
+const DEFAULT_CHURCH={"이준민 목사":"서울동부","진세영 목사":"서울동부"};
+// 성경 권명 별칭 → 표준명
+const BOOK_ALIAS={"다니엘서":"다니엘","미가서":"미가","요한계시록서":"요한계시록","시편서":"시편"};
+// 제목 표기가 달라도 같은 시리즈로 묶을 때 (공백 제거 후 비교)
+const SERIES_ALIAS={"하나님의사람이갖춰야할덕목":"하나님의사람이갖추어야할덕목"};
+
+const OT=[["창세기","창"],["출애굽기","출"],["레위기","레"],["민수기","민"],["신명기","신"],["여호수아","수"],["사사기","삿"],["룻기","룻"],["사무엘상","삼상"],["사무엘하","삼하"],["열왕기상","왕상"],["열왕기하","왕하"],["역대상","대상"],["역대하","대하"],["에스라","스"],["느헤미야","느"],["에스더","에"],["욥기","욥"],["시편","시"],["잠언","잠"],["전도서","전"],["아가","아"],["이사야","사"],["예레미야","렘"],["예레미야애가","애"],["에스겔","겔"],["다니엘","단"],["호세아","호"],["요엘","욜"],["아모스","암"],["오바댜","옵"],["요나","욘"],["미가","미"],["나훔","나"],["하박국","합"],["스바냐","습"],["학개","학"],["스가랴","슥"],["말라기","말"]];
+const NT=[["마태복음","마"],["마가복음","막"],["누가복음","눅"],["요한복음","요"],["사도행전","행"],["로마서","롬"],["고린도전서","고전"],["고린도후서","고후"],["갈라디아서","갈"],["에베소서","엡"],["빌립보서","빌"],["골로새서","골"],["데살로니가전서","살전"],["데살로니가후서","살후"],["디모데전서","딤전"],["디모데후서","딤후"],["디도서","딛"],["빌레몬서","몬"],["히브리서","히"],["야고보서","약"],["베드로전서","벧전"],["베드로후서","벧후"],["요한일서","요일"],["요한이서","요이"],["요한삼서","요삼"],["유다서","유"],["요한계시록","계"]];
+const BOOK_ORDER=[...OT,...NT].map(b=>b[0]);
+
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let ALL=[],VIEW=[],SHOWN=0;const PAGE=40;
-fetch("sermons.json").then(r=>r.json()).then(d=>{ALL=d.items;init()}).catch(()=>{$("#sub").textContent="데이터를 불러오지 못했습니다."});
+let ALL=[],VIEW=[],SHOWN=0,SERIES={};const PAGE=40;
+const S={q:"",y:"",m:"",p:"",c:"",b:"",s:"",t:[],o:"",r:""};
+
+fetch("sermons.json").then(r=>r.json()).then(d=>{ALL=(d.items||[]).map(norm);buildSeries();init()})
+ .catch(()=>{$("#sub").textContent="데이터를 불러오지 못했습니다."});
+
+/* ---------- 정규화 ---------- */
+function norm(r){
+ const o={...r};
+ o.date=r.date||r.published||"";
+ o.year=r.year||+o.date.slice(0,4)||"";
+ let ch=(r.church||"").trim();ch=CHURCH_ALIAS[ch]||ch;
+ o.churchInferred=false;
+ if(!ch&&DEFAULT_CHURCH[r.preacher]){ch=DEFAULT_CHURCH[r.preacher];o.churchInferred=true}
+ o.church=ch;
+ o.preacher=(r.preacher||"").trim();
+ const bk=r.scripture?.book?(BOOK_ALIAS[r.scripture.book.trim()]||r.scripture.book.trim()):"";
+ o.book=bk;
+ o.topics=r.topics||[];
+ return o;
+}
+const skey=s=>{const k=s.replace(/\s/g,"");return SERIES_ALIAS[k]||k};
+function parseSeries(title){
+ const t=(title||"").trim();let m=t.match(/^(.*?)\s*\((\d+)\)/);
+ if(!m)m=t.match(/^(.*\D)\s*(\d+)$/);
+ if(!m)return null;
+ let name=m[1].split(/[,，]/).pop().trim();
+ if(name.length<1)return null;
+ return {name,part:+m[2]};
+}
+function buildSeries(){
+ const tmp={};
+ ALL.forEach(r=>{
+  let sr=r.series?{name:r.series,part:+r.part||null}:parseSeries(r.title);
+  if(sr){const k=skey(sr.name);(tmp[k]=tmp[k]||{name:sr.name,items:[]}).items.push([r,sr.part])}
+ });
+ // 번호 없는 같은 제목은 1회로 간주
+ ALL.forEach(r=>{if(r.series||parseSeries(r.title))return;const k=skey(r.title||"");const t=tmp[k];if(!t)return;
+  // 번호 없는 같은 제목: 1회가 없고 다른 회차보다 앞선 날짜면 1회, 아니면 번호 없음
+  const first=t.items.reduce((m,x)=>x[0].date<m?x[0].date:m,"9999");
+  t.items.push([r,(!t.items.some(x=>x[1]===1)&&r.date<first)?1:null])});
+ Object.entries(tmp).forEach(([k,v])=>{
+  if(v.items.length<2)return;
+  v.items.forEach(([r,p])=>{r.seriesKey=k;r.part=p});
+  const parts=v.items.map(x=>x[1]).filter(Boolean),max=Math.max(...parts);
+  const have=new Set(parts),missing=[];for(let i=1;i<=max;i++)if(!have.has(i))missing.push(i);
+  const dupParts=parts.filter((p,i)=>parts.indexOf(p)!==i);
+  SERIES[k]={name:v.items.find(x=>x[1]===1)?.[0].title.replace(/\s*\(?1\)?$/,"")||v.name,count:v.items.length,max,missing,dup:[...new Set(dupParts)]};
+ });
+}
+
+/* ---------- 초기화 ---------- */
 function init(){
+ const cnt=f=>{const m={};ALL.forEach(r=>{const k=f(r);if(k)m[k]=(m[k]||0)+1});return m};
  [...new Set(ALL.map(r=>r.year).filter(Boolean))].sort((a,b)=>b-a).forEach(v=>$("#fy").add(new Option(v+"년",v)));
- const pc={};ALL.forEach(r=>r.preacher&&(pc[r.preacher]=(pc[r.preacher]||0)+1));
- Object.entries(pc).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>$("#fp").add(new Option(`${k} (${n})`,k)));
- [...new Set(ALL.flatMap(r=>r.topics||[]))].sort().forEach(v=>$("#ft").add(new Option(v,v)));
- if(!$("#ft").options[1])$("#ft").hidden=true;
- $("#sub").textContent=`총 ${ALL.length}편 · 일자순 · 제목을 누르면 요약이 열립니다`;
- ["q","fy","fp","ft"].forEach(i=>$("#"+i).addEventListener("input",apply));apply()}
-function apply(){
- const q=$("#q").value.trim().toLowerCase(),y=$("#fy").value,p=$("#fp").value,t=$("#ft").value;
- VIEW=ALL.filter(r=>(!y||r.year==y)&&(!p||r.preacher===p)&&(!t||(r.topics||[]).includes(t))&&
-  (!q||[r.title,r.preacher,r.church,r.scripture?.raw,r.summary_short,...(r.topics||[]),...(r.key_points||[])].join(" ").toLowerCase().includes(q)));
- SHOWN=0;render()}
+ Object.entries(cnt(r=>r.preacher)).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>$("#fp").add(new Option(`${k} (${n})`,k)));
+ Object.entries(cnt(r=>r.church)).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"ko")).forEach(([k,n])=>$("#fc").add(new Option(`${k} (${n})`,k)));
+ const bc=cnt(r=>r.book);Object.keys(bc).sort((a,b)=>(BOOK_ORDER.indexOf(a)+1||99)-(BOOK_ORDER.indexOf(b)+1||99)).forEach(k=>$("#fb").add(new Option(`${k} (${bc[k]})`,k)));
+ Object.entries(SERIES).sort((a,b)=>a[1].name.localeCompare(b[1].name,"ko")).forEach(([k,v])=>$("#fs").add(new Option(`${v.name} (${v.count}편${v.missing.length?` · ${v.missing.join("·")}회 없음`:""})`,k)));
+ const tc=(()=>{const m={};ALL.forEach(r=>r.topics.forEach(t=>m[t]=(m[t]||0)+1));return m})();
+ Object.entries(tc).sort((a,b)=>b[1]-a[1]).forEach(([t])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.dataset.t=t;b.setAttribute("aria-pressed","false");$("#ft").appendChild(b)});
+ const last=ALL.map(r=>r.published||r.date).filter(Boolean).sort().pop();
+ $("#sub").textContent=`총 ${ALL.length}편 · 제목을 누르면 요약이 열립니다`;
+ $("#updated").textContent=last?`최근 갱신 ${last}`:"";
+
+ renderDash();
+ readURL();
+ ["q","fy","fp","fc","fb","fs","fo","fr"].forEach(id=>$("#"+id).addEventListener("input",()=>{
+  const map={q:"q",fy:"y",fp:"p",fc:"c",fb:"b",fs:"s",fo:"o",fr:"r"};S[map[id]]=$("#"+id).value;if(id==="fy")S.m="";apply()}));
+ $("#ft").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(b)toggleTopic(b.dataset.t)});
+ $("#ftoggle").addEventListener("click",()=>{const p=$("#fpanel"),r=p.getBoundingClientRect(),inView=r.bottom>0&&r.top<innerHeight&&p.offsetHeight>0;
+  if(inView&&p.classList.contains("open")){p.classList.remove("open");$("#ftoggle").setAttribute("aria-expanded","false");return}
+  p.classList.add("open");$("#ftoggle").setAttribute("aria-expanded","true");scrollTo({top:Math.max(0,p.getBoundingClientRect().top+scrollY-12),behavior:"smooth"})});
+ $("#active").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;const k=b.dataset.k;
+  if(k==="all"){clearAll();return}else if(k==="t")S.t=S.t.filter(x=>x!==b.dataset.v);else S[k]="";apply()});
+ $("#list").addEventListener("click",e=>{if(e.target.closest("[data-clear]")){clearAll();return}const g=e.target.closest("[data-go]");if(!g)return;e.preventDefault();
+  const [k,v]=[g.dataset.go,g.dataset.v];if(k==="t"){if(!S.t.includes(v))S.t.push(v)}else{S[k]=v}apply();jump()});
+ try{if(localStorage.getItem("dashClosed")==="1")$("#dash").open=false}catch(e){}
+ $("#dash").addEventListener("toggle",()=>{try{localStorage.setItem("dashClosed",$("#dash").open?"0":"1")}catch(e){}});
+ window.addEventListener("popstate",()=>{readURL();apply(false)});
+ apply(false);
+}
+function clearAll(){Object.assign(S,{q:"",y:"",m:"",p:"",c:"",b:"",s:"",t:[],r:""});apply()}
+function toggleTopic(t){S.t=S.t.includes(t)?S.t.filter(x=>x!==t):[...S.t,t];apply()}
+function jump(){const top=$("main").getBoundingClientRect().top+scrollY-$("#bar").offsetHeight-4;if(scrollY>top||top-scrollY>200)scrollTo({top,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+
+/* ---------- URL 상태 ---------- */
+function readURL(){const u=new URLSearchParams(location.search);
+ for(const k of ["q","y","m","p","c","b","s","o","r"])S[k]=u.get(k)||"";S.t=(u.get("t")||"").split(",").filter(Boolean)}
+function writeURL(){const u=new URLSearchParams();
+ for(const k of ["q","y","m","p","c","b","s","o","r"])if(S[k])u.set(k,S[k]);if(S.t.length)u.set("t",S.t.join(","));
+ const qs=u.toString();history.replaceState(null,"",qs?"?"+qs:location.pathname)}
+
+/* ---------- 필터 ---------- */
+function apply(push=true){
+ $("#q").value=S.q;$("#fy").value=S.y;$("#fp").value=S.p;$("#fc").value=S.c;$("#fb").value=S.b;$("#fs").value=S.s;$("#fo").value=S.o;$("#fr").value=S.r;
+ document.querySelectorAll("#ft button").forEach(b=>b.setAttribute("aria-pressed",S.t.includes(b.dataset.t)));
+ const q=S.q.trim().toLowerCase();
+ VIEW=ALL.filter(r=>(!S.y||r.year==S.y)&&(!S.m||r.date.startsWith(S.m))&&(!S.p||r.preacher===S.p)&&(!S.c||r.church===S.c)&&(!S.b||r.book===S.b)&&
+  (!S.s||r.seriesKey===S.s)&&(!S.r||r.needs_review)&&S.t.every(t=>r.topics.includes(t))&&
+  (!q||[r.title,r.preacher,r.church,r.scripture?.raw,r.summary_short,...r.topics,...(r.key_points||[])].join(" ").toLowerCase().includes(q)));
+ if(S.s)VIEW.sort((a,b)=>(a.part||0)-(b.part||0)||a.date.localeCompare(b.date));
+ else VIEW.sort((a,b)=>S.o==="old"?a.date.localeCompare(b.date):b.date.localeCompare(a.date));
+ if(push)writeURL();
+ renderActive();markDash();SHOWN=0;render();
+}
+function renderActive(){
+ const L=[];const add=(k,label,v)=>L.push(`<button class="chip" data-k="${k}"${v?` data-v="${esc(v)}"`:""} title="필터 해제">${esc(label)}</button>`);
+ if(S.q)add("q",`“${S.q}”`);if(S.y&&!S.m)add("y",S.y+"년");if(S.m)add("m",S.m.replace("-","년 ")+"월");if(S.p)add("p",S.p);if(S.c)add("c",S.c);
+ if(S.b)add("b",S.b);if(S.s)add("s","시리즈: "+(SERIES[S.s]?.name||S.s));S.t.forEach(t=>add("t","#"+t,t));if(S.r)add("r","검토 필요");
+ if(L.length>1)L.push(`<button class="clear" data-k="all">모두 해제</button>`);
+ $("#active").innerHTML=L.join("");
+ const n=["y","p","c","b","s","r"].filter(k=>S[k]).length+S.t.length;
+ $("#ftoggle").innerHTML=n?`필터 <b>${n}</b>`:"필터";
+}
+
+/* ---------- 목록 ---------- */
+const hl=(s,q)=>{s=String(s??"");if(!q)return esc(s);const low=s.toLowerCase(),ql=q.toLowerCase();let out="",i=0,j;while((j=low.indexOf(ql,i))>=0){out+=esc(s.slice(i,j))+"<mark>"+esc(s.slice(j,j+q.length))+"</mark>";i=j+q.length}return out+esc(s.slice(i))};
 function row(r){
- const who=[r.church,r.preacher].filter(Boolean).join(" · ")||"설교자 미상";
- const d=r.date||r.published||"";
- return `<details><summary><span class="d">${esc(d)}</span><span class="c ${r.church?"":"dim"}">${esc(r.church||"-")}</span><span class="p ${r.preacher?"":"dim"}">${esc(r.preacher||"미상")}</span><span class="t">${esc(r.title||"(제목 없음)")}</span><span class="sub2">${esc(who)}</span></summary>
+ const q=S.q.trim();
+ const who=[r.church?r.church+(r.churchInferred?"*":""):"",r.preacher].filter(Boolean).join(" · ")||"설교자 미상";
+ const sr=r.seriesKey?SERIES[r.seriesKey]:null;
+ const badges=(r.needs_review?`<span class="badge rv">검토 필요</span>`:"")+(sr&&!S.s?`<span class="badge sr">${esc(sr.name)}${r.part?" "+r.part+"회":""}</span>`:"");
+ const chHtml=r.church?(r.churchInferred?`<span class="inf" title="교회명 미기재 · 설교자 기준 추정">${esc(r.church)}*</span>`:esc(r.church)):"-";
+ const acts=[
+  r.preacher?`<button class="go" data-go="p" data-v="${esc(r.preacher)}">${esc(r.preacher)} 설교 더 보기</button>`:"",
+  r.book?`<button class="go" data-go="b" data-v="${esc(r.book)}">${esc(r.book)} 본문 설교</button>`:"",
+  sr&&S.s!==r.seriesKey?`<button class="go" data-go="s" data-v="${esc(r.seriesKey)}">시리즈 전체 (${sr.count}편)</button>`:""
+ ].join("");
+ return `<details data-id="${esc(r.id)}"><summary><span class="d">${esc(r.date)}</span><span class="c ${r.church?"":"dim"}">${chHtml}</span><span class="p ${r.preacher?"":"dim"}">${esc(r.preacher||"미상")}</span><span class="t">${hl(r.title||"(제목 없음)",q)}${badges}</span><span class="sub2">${esc(who)}</span></summary>
  <div class="body">${r.scripture?`<div class="sc">본문 ${esc(r.scripture.raw)}</div>`:""}
- ${r.summary_short?`<p>${esc(r.summary_short)}</p>`:'<p class="dim">요약이 없습니다.</p>'}
- ${(r.key_points||[]).length?`<ul>${r.key_points.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+ ${r.summary_short?`<p>${hl(r.summary_short,q)}</p>`:'<p class="dim">요약이 없습니다.</p>'}
+ ${(r.key_points||[]).length?`<ul>${r.key_points.map(x=>`<li>${hl(x,q)}</li>`).join("")}</ul>`:""}
  ${r.key_quote?`<blockquote>${esc(r.key_quote)}</blockquote>`:""}
- ${(r.topics||[]).length?`<div class="tags">${r.topics.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div>`:""}
- <a class="src" href="${esc(r.source_url)}" target="_blank" rel="noopener">원문 보기</a></div></details>`}
+ ${r.topics.length?`<div class="tags">${r.topics.map(x=>`<button class="tag" data-go="t" data-v="${esc(x)}">#${esc(x)}</button>`).join("")}</div>`:""}
+ <div class="acts">${r.source_url?`<a class="src" href="${esc(r.source_url)}" target="_blank" rel="noopener">원문 보기</a>`:""}${acts}</div></div></details>`}
 function render(){
  const box=$("#list");
  SHOWN=Math.min(SHOWN+PAGE,VIEW.length);
- let html="",last=null;
- VIEW.slice(0,SHOWN).forEach(r=>{
-  const ym=(r.date||r.published||"").slice(0,7);
-  if(ym!==last){if(last!==null)html+="</div>";html+=`<div class="ym">${ym.replace("-","년 ")}월</div><div class="list">`;last=ym}
-  html+=row(r)});
- if(last!==null)html+="</div>";
- box.innerHTML=VIEW.length?html:'<div class="empty">조건에 맞는 설교가 없습니다.</div>';
- $("#meta").textContent=VIEW.length?`${VIEW.length}편`:"";
- $("#more").hidden=SHOWN>=VIEW.length}
+ let html="";
+ if(S.s&&SERIES[S.s]){
+  const sr=SERIES[S.s],have=new Map();VIEW.forEach(r=>{(have.get(r.part)||have.set(r.part,[]).get(r.part)).push(r)});
+  html+=`<div class="ym">${esc(sr.name)} · ${sr.count}편${sr.missing.length?` · ${sr.missing.join(", ")}회 없음`:""}</div><div class="list">`;
+  for(let i=1;i<=sr.max;i++){if(have.has(i))have.get(i).forEach(r=>html+=row(r));else if(!S.q&&!S.t.length)html+=`<div class="missing">${i}회 · 아카이브에 없음</div>`}
+  VIEW.filter(r=>!r.part).forEach(r=>html+=row(r));
+  html+="</div>";SHOWN=VIEW.length;
+ }else{
+  let last=null;
+  VIEW.slice(0,SHOWN).forEach(r=>{const ym=r.date.slice(0,7);
+   if(ym!==last){if(last!==null)html+="</div>";html+=`<div class="ym">${ym.replace("-","년 ")}월</div><div class="list">`;last=ym}
+   html+=row(r)});
+  if(last!==null)html+="</div>";
+ }
+ box.innerHTML=VIEW.length?html:'<div class="empty">조건에 맞는 설교가 없습니다.<br><button class="go" style="margin-top:10px" data-clear>필터 모두 해제</button></div>';
+ const filtered=VIEW.length!==ALL.length;
+ $("#meta").textContent=VIEW.length?(filtered?`${VIEW.length}편 (전체 ${ALL.length}편 중)`:`${VIEW.length}편`):"";
+ $("#more").hidden=SHOWN>=VIEW.length;
+}
 $("#more").onclick=render;
+
+/* ---------- 한눈에 보기 ---------- */
+function sundays(y,m,from,to){let n=0;const d=new Date(Date.UTC(y,m-1,1));while(d.getUTCMonth()===m-1){const s=d.toISOString().slice(0,10);if(d.getUTCDay()===0&&s>=from&&s<=to)n++;d.setUTCDate(d.getUTCDate()+1)}return n}
+function renderDash(){
+ const dates=ALL.map(r=>r.date).filter(Boolean).sort(),first=dates[0],last=dates[dates.length-1];
+ const years=[...new Set(ALL.map(r=>+r.year).filter(Boolean))].sort();
+ const thisY=years[years.length-1];
+ const M={};ALL.forEach(r=>{const k=r.date.slice(0,7);M[k]=(M[k]||0)+1});
+ // 연도별 주일 대비
+ const cover={};years.forEach(y=>{let n=0,s=0;for(let m=1;m<=12;m++){const k=`${y}-${String(m).padStart(2,"0")}`;s+=sundays(y,m,first,last);n+=M[k]||0}cover[y]=[n,s]});
+
+ /* KPI */
+ const pc={};ALL.forEach(r=>r.preacher&&(pc[r.preacher]=(pc[r.preacher]||0)+1));
+ const topP=Object.entries(pc).sort((a,b)=>b[1]-a[1]).slice(0,2);
+ const books=new Set(ALL.map(r=>r.book).filter(b=>BOOK_ORDER.includes(b)));
+ const ntN=ALL.filter(r=>NT.some(b=>b[0]===r.book)).length;
+ const review=ALL.filter(r=>r.needs_review).length;
+ const [yn,ys]=cover[thisY];const yr=ys?Math.round(Math.min(yn/ys,1)*100):0;
+ const k=[
+  `<div class="kpi"><span class="k">설교</span><span class="v">${ALL.length}<small>편</small></span><span class="d">${first.slice(0,7).replace("-",".")} – ${last.slice(0,7).replace("-",".")}</span></div>`,
+  `<button class="kpi" data-ky="${thisY}"><span class="k">${thisY}년</span><span class="v">${yn}<small>편</small></span><span class="d ${yr<75?"alert":""}">주일 대비 ${yr}%</span></button>`,
+  `<div class="kpi"><span class="k">설교자</span><span class="v">${Object.keys(pc).length}<small>명</small></span><span class="d">${topP.map(([n,c])=>n.replace(/ 목사$/,"")+" "+c).join(" · ")}</span></div>`,
+  `<div class="kpi"><span class="k">성경 본문</span><span class="v">${books.size}<small>/66권</small></span><span class="d">신약 ${Math.round(ntN/ALL.length*100)}% · 구약 ${100-Math.round(ntN/ALL.length*100)}%</span></div>`,
+  `<button class="kpi" data-kr="1"><span class="k">검토 필요</span><span class="v">${review}<small>편</small></span><span class="d ${review?"alert":""}">${review?"눌러서 보기":"없음"}</span></button>`
+ ];
+ $("#kpis").innerHTML=k.join("");
+ $("#kpis").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.ky){S.y=b.dataset.ky;S.m=""}if(b.dataset.kr)S.r="1";apply();jump()});
+
+
+ /* 연도별·월별 설교자 */
+ const cc={};ALL.forEach(r=>r.church&&(cc[r.church]=(cc[r.church]||0)+1));
+ CAL.home=Object.entries(cc).sort((a,b)=>b[1]-a[1])[0]?.[0]||"";
+ CAL.y=thisY;CAL.years=years.slice().reverse();CAL.first=first;CAL.last=last;
+ $("#cal-lg").innerHTML=`<span><i style="background:var(--s2)"></i>다른 교회에서 오신 설교자</span><span><i style="background:var(--sub)"></i>${esc(CAL.home)}</span><span>교회명 뒤 * 는 설교자 기준으로 채운 값</span>`;
+ $("#cal-years").addEventListener("click",e=>{const b=e.target.closest("[data-cy]");if(!b)return;CAL.y=+b.dataset.cy;renderCal()});
+ $("#cal").addEventListener("click",e=>{
+  const ev=e.target.closest("[data-id]");
+  if(ev){const id=ev.dataset.id,key=ev.dataset.ym;Object.assign(S,{q:"",p:"",c:"",b:"",s:"",t:[],r:"",y:key.slice(0,4),m:key});apply();openSermon(id);return}
+  const mh=e.target.closest("[data-ym]");if(mh){const key=mh.dataset.ym;if(S.m===key){S.m=""}else{S.m=key;S.y=key.slice(0,4)}apply();jump()}
+ });
+ renderCal();
+}
+const CAL={};
+function renderCal(){
+ if(!CAL.years)return;
+ $("#cal-years").innerHTML=CAL.years.map(y=>`<button type="button" data-cy="${y}" aria-pressed="${y===CAL.y}">${y}</button>`).join("");
+ const items=ALL.filter(r=>+r.year===CAL.y).sort((a,b)=>a.date.localeCompare(b.date));
+ const pre=new Set(items.map(r=>r.preacher).filter(Boolean)),chs=new Set(items.map(r=>r.church).filter(Boolean));
+ const guest=items.filter(r=>r.church&&r.church!==CAL.home).length;
+ $("#cal-sum").innerHTML=`<b>${CAL.y}년 ${items.length}편</b> · 설교자 ${pre.size}명 · 교회 ${chs.size}곳 · 다른 교회 설교 ${guest}편`;
+ const lastYM=CAL.last.slice(0,7),firstYM=CAL.first.slice(0,7);let h="";
+ for(let m=1;m<=12;m++){
+  const key=`${CAL.y}-${String(m).padStart(2,"0")}`,list=items.filter(r=>r.date.startsWith(key));
+  const sun=sundays(CAL.y,m,CAL.first,CAL.last),out=key>lastYM||key<firstYM;
+  h+=`<div class="mon${S.m===key?" sel":""}"><button type="button" class="mh" data-ym="${key}"${list.length?"":" disabled"}><b>${m}월</b><span>${list.length?list.length+"편"+(sun?" / 주일 "+sun:""):""}</span></button>`;
+  if(list.length){
+   h+=`<ul>`+list.map(r=>{const g=r.church&&r.church!==CAL.home;
+    return `<li><button type="button" class="ev${g?" guest":""}" data-id="${esc(r.id)}" data-ym="${key}" title="${esc(r.title||"")}"><span class="dd">${+r.date.slice(8,10)}일</span><span class="pr">${esc(r.preacher||"설교자 미상")}</span><span class="ch">${esc(r.church||"교회 미상")}${r.churchInferred?"*":""}</span></button></li>`}).join("")+`</ul>`;
+  }else h+=`<div class="emp${!out&&sun?" gap":""}">${out?"—":sun?`주일 ${sun}회 · 기록 없음`:"—"}</div>`;
+  h+=`</div>`;
+ }
+ $("#cal").innerHTML=h;
+}
+function openSermon(id){
+ const d=[...document.querySelectorAll("#list details")].find(x=>x.dataset.id===id);if(!d)return;
+ d.open=true;const top=d.getBoundingClientRect().top+scrollY-$("#bar").offsetHeight-8;
+ scrollTo({top,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"});
+}
+function markDash(){if(S.y&&+S.y!==CAL.y&&CAL.years?.includes(+S.y))CAL.y=+S.y;renderCal()}
 </script>
 </body>
 </html>
