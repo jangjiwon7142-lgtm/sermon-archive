@@ -1,0 +1,11 @@
+data/raw/
+data/failed.json
+__pycache__/
+*.pyc
+.venv/
+data/clean/
+data/prep/
+data/queue.json
+data/items_bad/
+data/crawl.log
+data/queue_*.json
