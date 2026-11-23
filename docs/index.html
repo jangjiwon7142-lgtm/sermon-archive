@@ -275,8 +275,6 @@ function init(){
   if(k==="all"){clearAll();return}else if(k==="t")S.t=S.t.filter(x=>x!==b.dataset.v);else S[k]="";apply()});
  $("#list").addEventListener("click",e=>{if(e.target.closest("[data-clear]")){clearAll();return}const g=e.target.closest("[data-go]");if(!g)return;e.preventDefault();
   const [k,v]=[g.dataset.go,g.dataset.v];if(k==="t"){if(!S.t.includes(v))S.t.push(v)}else{S[k]=v}apply();jump()});
- try{if(localStorage.getItem("dashClosed")==="1")$("#dash").open=false}catch(e){}
- $("#dash").addEventListener("toggle",()=>{try{localStorage.setItem("dashClosed",$("#dash").open?"0":"1")}catch(e){}});
  window.addEventListener("popstate",()=>{readURL();apply(false)});
  apply(false);
 }
