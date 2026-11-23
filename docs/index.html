@@ -28,12 +28,14 @@ header p{margin:4px 0 0;color:var(--sub);font-size:14px}
 .num{font-variant-numeric:tabular-nums}
 
 /* ---- 한눈에 보기 ---- */
-.dash{margin:14px 0 6px;background:var(--card);border:1px solid var(--line);border-radius:14px}
-.dash>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-weight:700;font-size:15px}
+.dash{margin:14px 0 6px;background:var(--accbg);border:2px solid var(--acc);border-radius:14px;overflow:hidden}
+.dash>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;font-weight:800;font-size:17px;color:#fff;background:linear-gradient(135deg,#2f5d50,#4a8a70)}
 .dash>summary::-webkit-details-marker{display:none}
-.dash>summary::after{content:"접기";font-weight:400;font-size:13px;color:var(--sub)}
-.dash:not([open])>summary::after{content:"펼치기"}
-.dash-body{padding:4px 16px 18px;display:flex;flex-direction:column;gap:22px}
+.dash>summary::before{content:"📊";margin-right:8px}
+.dash>summary::after{content:"▲ 접기";font-weight:700;font-size:14px;color:var(--acc);background:#fff;border-radius:999px;padding:6px 14px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.dash>summary:hover::after{background:#fff6d6}
+.dash:not([open])>summary::after{content:"▼ 펼치기";background:#ffe27a;color:#4a3500}
+.dash-body{padding:16px 16px 18px;display:flex;flex-direction:column;gap:22px}
 .panel{display:flex;flex-direction:column;gap:10px;min-width:0}
 .ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .ph h2{margin:0;font-size:15px}
